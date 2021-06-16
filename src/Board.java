@@ -10,21 +10,41 @@ public class Board {
 
     private class Block {
 
-        public char symbol;
-        public ArrayList<Block> possibleMovements;
+        private final char symbol;
+        private final ArrayList<Block> possibleMovements;
 
-        public Block(char symbol){
+        private final int line;
+        private final int column;
+
+        public Block(char symbol, int line, int column){
             this.symbol = symbol;
+            this.line = line;
+            this.column = column;
             possibleMovements = new ArrayList<>();
+        }
+
+        public char getSymbol(){
+            return this.symbol;
         }
 
         public void addPossibleMovement(Block block){
             this.possibleMovements.add(block);
         }
 
+        public void printPossibleMovements(){
+            for(Block block : this.possibleMovements){
+                System.out.println(block);
+            }
+        }
+
+        @Override
+        public String toString(){
+            return "[Bloco]\nSymbol: " + this.symbol + "\nPosition: [" + this.line + ", " + this.column + "]\n";
+        }
+
     }
 
-    private Block[][] board;
+    private final Block[][] board;
 
     private Block startBlock;
     private Block endBlock;
@@ -54,7 +74,7 @@ public class Board {
             if(line.equals("")) continue;
             for(int i = 0; i < line.length(); i++){
                 char symbol = line.charAt(i);
-                Block block = new Block(symbol);
+                Block block = new Block(symbol, j, i);
                 this.board[j][i] = block;
                 if(symbol == 'C'){
                     this.startBlock = block;
@@ -113,11 +133,6 @@ public class Board {
                 }
                 block.addPossibleMovement(this.board[diagonalUpLeftX][diagonalUpLeftY]);
 
-                // System.out.println("== DIAGONAL UP LEFT ==");
-                // System.out.println(diagonalUpLeftX);
-                // System.out.println(diagonalUpLeftY);
-                // System.out.println();
-
                 // Block to the diagonal up right.
                 int diagonalUpRightX = diagonalUpLeftX;
 
@@ -128,12 +143,6 @@ public class Board {
                 else if(diagonalUpRightY == (columns - 1) + 1){
                     diagonalUpRightY = 0;
                 }
-
-                // System.out.println("== DIAGONAL UP RIGHT ==");
-                // System.out.println(diagonalUpRightX);
-                // System.out.println(diagonalUpRightY);
-                // System.out.println();
-
                 block.addPossibleMovement(this.board[diagonalUpRightX][diagonalUpRightY]);
 
                 // Block to the diagonal down left.
@@ -156,10 +165,15 @@ public class Board {
         }
     }
 
+    public void printPossibleMovements(int line, int column){
+        Block block = this.board[line][column];
+        block.printPossibleMovements();
+    }
+
     public void printBoard(){
         for(int i = 0; i < this.board.length; i++){
             for(int j = 0; j < this.board[0].length; j++){
-                System.out.print(this.board[i][j].symbol);
+                System.out.print(this.board[i][j].getSymbol());
             }
             System.out.print("\n");
         }
