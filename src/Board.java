@@ -97,7 +97,6 @@ public class Board {
 
                 // Block to the diagonal up left.
                 int diagonalUpLeftX = i - 2;
-
                 if(diagonalUpLeftX == -2){
                     diagonalUpLeftX = (lines - 1) - 1;
                 }
@@ -106,7 +105,6 @@ public class Board {
                 }
 
                 int diagonalUpLeftY = j - 2;
-
                 if(diagonalUpLeftY == -2){
                     diagonalUpLeftY = (columns - 1) - 1;
                 }
@@ -116,10 +114,29 @@ public class Board {
                 block.addPossibleMovement(this.board[diagonalUpLeftX][diagonalUpLeftY]);
 
                 // Block to the diagonal up right.
+                int diagonalUpRightX = diagonalUpLeftX;
 
+                int diagonalUpRightY = j + 2;
+                if(diagonalUpRightY == (lines - 1) + 2){
+                    diagonalUpRightY = 1;
+                }
+                else if(diagonalUpRightY == (lines - 1) + 1){
+                    diagonalUpRightY = 0;
+                }
+                block.addPossibleMovement(this.board[diagonalUpRightX][diagonalUpRightY]);
 
-                int diagonalUpRight;
-                int diagonalDownLeft;
+                // Block to the diagonal down left.
+                int diagonalDownLeftX = i + 2;
+                if(diagonalDownLeftX == (lines - 1) + 2){
+                    diagonalDownLeftX = 1;
+                }
+                else if(diagonalDownLeftX == (lines - 1) + 1){
+                    diagonalDownLeftX = 0;
+                }
+
+                int diagonalDownLeftY = diagonalUpLeftY;
+                block.addPossibleMovement(this.board[diagonalDownLeftX][diagonalDownLeftY]);
+
                 int diagonalDownRight;
             }
         }
