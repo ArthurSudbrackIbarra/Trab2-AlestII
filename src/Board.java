@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 public class Board {
 
+    // Classe interna Block (representa as posicoes do labirinto).
     private class Block {
 
         private final char symbol;
@@ -31,6 +32,7 @@ public class Board {
             this.possibleMovements.add(block);
         }
 
+        // Exibe na tela todas os possiveis blocos de serem acessados a partir de um bloco qualquer.
         public void printPossibleMovements(){
             for(Block block : this.possibleMovements){
                 System.out.println(block);
@@ -46,8 +48,8 @@ public class Board {
 
     private final Block[][] board;
 
-    private Block startBlock;
     private Block endBlock;
+    private Block currentBlock;
 
     public Board (String fileDirectory) throws IOException {
         Path path = Paths.get(fileDirectory);
@@ -77,7 +79,7 @@ public class Board {
                 Block block = new Block(symbol, j, i);
                 this.board[j][i] = block;
                 if(symbol == 'C'){
-                    this.startBlock = block;
+                    this.currentBlock = block;
                 }
                 else if(symbol == 'S'){
                     this.endBlock = block;
@@ -89,6 +91,7 @@ public class Board {
         fillPossibleMovements();
     }
 
+    // Preenche os possiveis movimentos a partir de cada bloco.
     public void fillPossibleMovements(){
         int lines = this.board.length;
         int columns = this.board[0].length;
@@ -163,11 +166,13 @@ public class Board {
         }
     }
 
+    // Printa os possiveis movimentos a partir de uma linha e coluna informada.
     public void printPossibleMovements(int line, int column){
         Block block = this.board[line][column];
         block.printPossibleMovements();
     }
 
+    // Exibe a matriz (tabuleiro) na tela.
     public void printBoard(){
         for(int i = 0; i < this.board.length; i++){
             for(int j = 0; j < this.board[0].length; j++){
