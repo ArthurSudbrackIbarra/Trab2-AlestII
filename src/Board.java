@@ -12,20 +12,34 @@ public class Board {
     private class Block {
 
         private final char symbol;
-        private final ArrayList<Block> possibleMovements;
 
         private final int line;
         private final int column;
 
+        private boolean visited;
+        private Block cameFrom;
+
+        public final ArrayList<Block> possibleMovements;
+
         public Block(char symbol, int line, int column){
             this.symbol = symbol;
+            this.visited = false;
             this.line = line;
             this.column = column;
+            cameFrom = null;
             possibleMovements = new ArrayList<>();
         }
 
         public char getSymbol(){
             return this.symbol;
+        }
+
+        public void setVisitedTrue(){
+            this.visited = true;
+        }
+
+        public void setCameFrom(Block block){
+            this.cameFrom = block;
         }
 
         public void addPossibleMovement(Block block){
@@ -80,6 +94,7 @@ public class Board {
                 this.board[j][i] = block;
                 if(symbol == 'C'){
                     this.currentBlock = block;
+                    block.setCameFrom(null);
                 }
                 else if(symbol == 'S'){
                     this.endBlock = block;
@@ -195,6 +210,25 @@ public class Board {
     public void printPossibleMovements(int line, int column){
         Block block = this.board[line][column];
         block.printPossibleMovements();
+    }
+
+    // Acha o caminho mais curto para a saida 'S' do tabuleiro a partir de 'C'.
+    public void findNearestPath(){
+        if(currentBlock == null || endBlock == null){
+            return;
+        }
+        findNearestPathAux(this.currentBlock);
+    }
+
+    private void findNearestPathAux(Block block){
+        block.setVisitedTrue();
+        for(Block adjacent : block.possibleMovements){
+            adjacent.setCameFrom(block);
+            if(adjacent == endBlock){
+                // Achou o caminho. Parar a recursao.
+            }
+            findNearestPathAux(adjacent);
+        }
     }
 
     // Exibe a matriz (tabuleiro) na tela.
