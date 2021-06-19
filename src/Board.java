@@ -57,7 +57,7 @@ public class Board {
     private Block endBlock;
     private Block startBlock;
 
-    private final Graph graph;
+    private final BFSGraph graph;
     private final HashMap<Block, Integer> vertexMap;
 
     public Board (String fileDirectory) throws IOException {
@@ -98,7 +98,7 @@ public class Board {
         }
         reader.close();
 
-        this.graph = new Graph(lineCount * columnCount);
+        this.graph = new BFSGraph(lineCount * columnCount);
         this.vertexMap = new HashMap<>();
 
         fillPossibleMovements();
@@ -200,6 +200,14 @@ public class Board {
         }
     }
 
+    public void possibleMovementsFrom(int i, int j){
+        Block block = this.board[i][j];
+        if(block == null) return;
+        for(Block adjacent : block.possibleMovements){
+            System.out.println(adjacent);
+        }
+    }
+
     // Adds edges to our graph depending on each block possible movement.
     private void addEdgesToGraph() {
         for(int i = 0; i < this.board.length; i++){
@@ -212,13 +220,13 @@ public class Board {
                 }
             }
         }
-        System.out.println(this.graph);
     }
 
-    private void findShortestPath(){
+    public void findShortestPath(){
         int startBlockVertex = this.vertexMap.get(this.startBlock);
         int endBlockVertex = this.vertexMap.get(this.endBlock);
-        // Fazer BFS aqui.
+        int minimumEdges = this.graph.minEdgeBFS(startBlockVertex, endBlockVertex);
+        System.out.println("\nCaminho com menor numero de passos: " + minimumEdges);
     }
     
     // Prints labyrinth on screen.
