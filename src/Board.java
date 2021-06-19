@@ -5,52 +5,45 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Objects;
 
 public class Board {
 
-    // Classe interna Block (representa as posicoes do labirinto).
-    private class Block {
+    // Inner class Block (represents the positions inside the board).
+    private static class Block {
 
-        private final char symbol;
-
-        private final int line;
-        private final int column;
-
-        private boolean visited;
-        private Block cameFrom;
-
+        public char symbol;
+        public int line;
+        public int column;
         public final ArrayList<Block> possibleMovements;
 
         public Block(char symbol, int line, int column){
             this.symbol = symbol;
-            this.visited = false;
             this.line = line;
             this.column = column;
-            cameFrom = null;
             possibleMovements = new ArrayList<>();
         }
-
-        public char getSymbol(){
-            return this.symbol;
-        }
-
-        public void setVisitedTrue(){
-            this.visited = true;
-        }
-
-        public void setCameFrom(Block block){
-            this.cameFrom = block;
-        }
-
+        
         public void addPossibleMovement(Block block){
             this.possibleMovements.add(block);
         }
 
-        // Exibe na tela todas os possiveis blocos de serem acessados a partir de um bloco qualquer.
-        public void printPossibleMovements(){
-            for(Block block : this.possibleMovements){
-                System.out.println(block);
-            }
+        // equals method for our vertex HashMap.
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Block block = (Block) o;
+            return symbol == block.symbol &&
+                    line == block.line &&
+                    column == block.column;
+        }
+
+        // hashCode method for our vertex HashMap.
+        @Override
+        public int hashCode() {
+            return (Integer.toString(this.line) + this.column).hashCode();
         }
 
         @Override
@@ -61,9 +54,11 @@ public class Board {
     }
 
     private final Block[][] board;
-
     private Block endBlock;
-    private Block currentBlock;
+    private Block startBlock;
+
+    private final Graph graph;
+    private final HashMap<Block, Integer> vertexMap;
 
     public Board (String fileDirectory) throws IOException {
         Path path = Paths.get(fileDirectory);
@@ -93,8 +88,7 @@ public class Board {
                 Block block = new Block(symbol, j, i);
                 this.board[j][i] = block;
                 if(symbol == 'C'){
-                    this.currentBlock = block;
-                    block.setCameFrom(null);
+                    this.startBlock = block;
                 }
                 else if(symbol == 'S'){
                     this.endBlock = block;
@@ -103,102 +97,102 @@ public class Board {
             j++;
         }
         reader.close();
+
+        this.graph = new Graph(lineCount * columnCount);
+        this.vertexMap = new HashMap<>();
+
         fillPossibleMovements();
+        addEdgesToGraph();
     }
 
-    // Preenche os possiveis movimentos a partir de cada bloco.
+    // Fills each possible movement from each block.
     public void fillPossibleMovements(){
         int lines = this.board.length;
         int columns = this.board[0].length;
+        int vertex = 0;
         for(int i = 0; i < lines; i++){
             for(int j = 0; j < columns; j++){
+                // Setting up vertex map.
                 Block block = this.board[i][j];
+                this.vertexMap.put(block, vertex);
+                vertex++;
+                
                 Block blockToAdd = null;
-
+                
                 // Block above.
                 int above = i - 1;
                 if(above > 0) {
                     blockToAdd = this.board[above][j];
-                    if(blockToAdd.getSymbol() != 'x'){
+                    if(blockToAdd.symbol != 'x'){
                         block.addPossibleMovement(blockToAdd);
                     }
                 }
-
                 // Block below.
                 int below = i + 1;
                 if(below < lines) {
                     blockToAdd = this.board[below][j];
-                    if(blockToAdd.getSymbol() != 'x'){
+                    if(blockToAdd.symbol != 'x'){
                         block.addPossibleMovement(blockToAdd);
                     }
                 }
-
                 // Block to the left.
                 int left = j - 1;
                 if(left < 0) left = columns - 1;
                 blockToAdd = this.board[i][left];
-                if(blockToAdd.getSymbol() != 'x'){
+                if(blockToAdd.symbol != 'x'){
                     block.addPossibleMovement(blockToAdd);
                 }
-
                 // Block to the right.
                 int right = j + 1;
                 if(right >= columns) right = 0;
                 blockToAdd = this.board[i][right];
-                if(blockToAdd.getSymbol() != 'x'){
+                if(blockToAdd.symbol != 'x'){
                     block.addPossibleMovement(blockToAdd);
                 }
-
                 // Block to the diagonal up left.
-                int diagonalUpLeftX = i - 2;
+                int diagonalUpLeftY = i - 2;
 
-                int diagonalUpLeftY = j - 2;
-                if(diagonalUpLeftY == -2){
-                    diagonalUpLeftY = (columns - 1) - 1;
+                int diagonalUpLeftX = j - 2;
+                if(diagonalUpLeftX == -2){
+                    diagonalUpLeftX = (columns - 1) - 1;
                 }
-                else if(diagonalUpLeftY == -1){
-                    diagonalUpLeftY = columns - 1;
+                else if(diagonalUpLeftX == -1){
+                    diagonalUpLeftX = columns - 1;
                 }
-                if(diagonalUpLeftX > 0){
-                    blockToAdd = this.board[diagonalUpLeftX][diagonalUpLeftY];
-                    if(blockToAdd.getSymbol() != 'x'){
+                if(diagonalUpLeftY > 0){
+                    blockToAdd = this.board[diagonalUpLeftY][diagonalUpLeftX];
+                    if(blockToAdd.symbol != 'x'){
                         block.addPossibleMovement(blockToAdd);
                     }
                 }
-
                 // Block to the diagonal up right.
-                int diagonalUpRightX = diagonalUpLeftX;
-
-                int diagonalUpRightY = j + 2;
-                if(diagonalUpRightY == (columns - 1) + 2){
-                    diagonalUpRightY = 1;
+                int diagonalUpRightX = j + 2;
+                if(diagonalUpRightX == (columns - 1) + 2){
+                    diagonalUpRightX = 1;
                 }
-                else if(diagonalUpRightY == (columns - 1) + 1){
-                    diagonalUpRightY = 0;
+                else if(diagonalUpRightX == (columns - 1) + 1){
+                    diagonalUpRightX = 0;
                 }
-                if(diagonalUpRightX > 0){
-                    blockToAdd = this.board[diagonalUpRightX][diagonalUpRightY];
-                    if(blockToAdd.getSymbol() != 'x'){
+                if(diagonalUpLeftY > 0){
+                    blockToAdd = this.board[diagonalUpLeftY][diagonalUpRightX];
+                    if(blockToAdd.symbol != 'x'){
                         block.addPossibleMovement(blockToAdd);
                     }
                 }
-
                 // Block to the diagonal down left.
-                int diagonalDownLeftX = i + 2;
-                int diagonalDownLeftY = diagonalUpLeftY;
-                if(diagonalDownLeftX < lines){
-                    blockToAdd = this.board[diagonalDownLeftX][diagonalDownLeftY];
-                    if(blockToAdd.getSymbol() != 'x'){
+                int diagonalDownLeftY = i + 2;
+                int diagonalDownLeftX = diagonalUpLeftX;
+                if(diagonalDownLeftY < lines){
+                    blockToAdd = this.board[diagonalDownLeftY][diagonalDownLeftX];
+                    if(blockToAdd.symbol != 'x'){
                         block.addPossibleMovement(blockToAdd);
                     }
                 }
-
                 // Block to the diagonal down right.
-                int diagonalDownRightX = diagonalDownLeftX;
-                int diagonalDownRightY = diagonalUpRightY;
-                if(diagonalDownRightX < lines){
-                    blockToAdd = this.board[diagonalDownRightX][diagonalDownRightY];
-                    if(blockToAdd.getSymbol() != 'x'){
+                int diagonalDownRightX = diagonalUpRightX;
+                if(diagonalDownLeftY < lines){
+                    blockToAdd = this.board[diagonalDownLeftY][diagonalDownRightX];
+                    if(blockToAdd.symbol != 'x'){
                         block.addPossibleMovement(blockToAdd);
                     }
                 }
@@ -206,36 +200,32 @@ public class Board {
         }
     }
 
-    // Printa os possiveis movimentos a partir de uma linha e coluna informada.
-    public void printPossibleMovements(int line, int column){
-        Block block = this.board[line][column];
-        block.printPossibleMovements();
-    }
-
-    // Acha o caminho mais curto para a saida 'S' do tabuleiro a partir de 'C'.
-    public void findNearestPath(){
-        if(currentBlock == null || endBlock == null){
-            return;
-        }
-        findNearestPathAux(this.currentBlock);
-    }
-
-    private void findNearestPathAux(Block block){
-        block.setVisitedTrue();
-        for(Block adjacent : block.possibleMovements){
-            adjacent.setCameFrom(block);
-            if(adjacent == endBlock){
-                // Achou o caminho. Parar a recursao.
+    // Adds edges to our graph depending on each block possible movement.
+    private void addEdgesToGraph() {
+        for(int i = 0; i < this.board.length; i++){
+            for(int j = 0; j < this.board[0].length; j++){
+                Block currentBlock = this.board[i][j];
+                int currentBlockVertex = this.vertexMap.get(currentBlock);
+                for(Block adjacent : currentBlock.possibleMovements){
+                    int adjacentBlockVertex = this.vertexMap.get(adjacent);
+                    graph.addEdge(currentBlockVertex, adjacentBlockVertex);
+                }
             }
-            findNearestPathAux(adjacent);
         }
+        System.out.println(this.graph);
     }
 
-    // Exibe a matriz (tabuleiro) na tela.
+    private void findShortestPath(){
+        int startBlockVertex = this.vertexMap.get(this.startBlock);
+        int endBlockVertex = this.vertexMap.get(this.endBlock);
+        // Fazer BFS aqui.
+    }
+    
+    // Prints labyrinth on screen.
     public void printBoard(){
         for(int i = 0; i < this.board.length; i++){
             for(int j = 0; j < this.board[0].length; j++){
-                System.out.print(this.board[i][j].getSymbol());
+                System.out.print(this.board[i][j].symbol);
             }
             System.out.print("\n");
         }

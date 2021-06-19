@@ -4,10 +4,9 @@ public class Main {
 
     public static void main(String[] args) {
         try{
-            Board board = new Board("casoenunciado.txt");
+            Board board = new Board("caso010.txt");
+            System.out.print("[Labirinto]\n");
             board.printBoard();
-            System.out.println();
-            board.printPossibleMovements(0, 0);
         }
         catch (IOException error){
             System.out.println("Erro!");
