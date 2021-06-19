@@ -116,6 +116,7 @@ public class Labyrinth {
             for(int j = 0; j < columns; j++){
                 // Setting up vertex map.
                 Block block = this.labyrinth[i][j];
+                if(block.symbol == 'x') continue;
                 this.vertexMap.put(block, vertexCount);
                 this.invertedVertexMap.put(vertexCount, block);
                 vertexCount++;
@@ -226,6 +227,7 @@ public class Labyrinth {
         for(int i = 0; i < this.labyrinth.length; i++){
             for(int j = 0; j < this.labyrinth[0].length; j++){
                 Block currentBlock = this.labyrinth[i][j];
+                if(currentBlock.symbol == 'x') continue;
                 int currentBlockVertex = this.vertexMap.get(currentBlock);
                 for(Block adjacent : currentBlock.possibleMovements){
                     int adjacentBlockVertex = this.vertexMap.get(adjacent);
@@ -240,8 +242,8 @@ public class Labyrinth {
         int startBlockVertex = this.vertexMap.get(this.startBlock);
         int endBlockVertex = this.vertexMap.get(this.endBlock);
         LinkedList<Integer> path = this.graph.minEdgeBFS(startBlockVertex, endBlockVertex);
-        for(Integer integer : path){
-            Block block = this.invertedVertexMap.get(integer);
+        for(Integer vertex : path){
+            Block block = this.invertedVertexMap.get(vertex);
             if(block != null && block.symbol != 'C' && block.symbol != 'S') {
                 block.symbol = 'O';
             }

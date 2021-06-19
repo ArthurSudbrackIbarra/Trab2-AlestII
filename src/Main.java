@@ -6,8 +6,6 @@ public class Main {
         try{
             Labyrinth labyrinth = new Labyrinth("caso200.txt");
 
-            labyrinth.possibleMovementsFrom(38, 81);
-
             System.out.print("[Labirinto]\n");
             labyrinth.printLabyrinth();
 
