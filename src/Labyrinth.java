@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 
 public class Labyrinth {
 
@@ -58,6 +59,7 @@ public class Labyrinth {
 
     private final BFSGraph graph;
     private final HashMap<Block, Integer> vertexMap;
+    private final HashMap<Integer, Block> invertedVertexMap;
 
     public Labyrinth(String fileDirectory) throws IOException {
         Path path = Paths.get(fileDirectory);
@@ -99,6 +101,7 @@ public class Labyrinth {
 
         this.graph = new BFSGraph(lineCount * columnCount);
         this.vertexMap = new HashMap<>();
+        this.invertedVertexMap = new HashMap<>();
 
         fillPossibleMovements();
         addEdgesToGraph();
@@ -114,6 +117,7 @@ public class Labyrinth {
                 // Setting up vertex map.
                 Block block = this.labyrinth[i][j];
                 this.vertexMap.put(block, vertexCount);
+                this.invertedVertexMap.put(vertexCount, block);
                 vertexCount++;
                 
                 Block blockToAdd = null;
@@ -232,11 +236,17 @@ public class Labyrinth {
     }
 
     // Finds the path with the least amount of edges (steps) in the graph.
-    public void findShortestPath(){
+    public int findShortestPath(){
         int startBlockVertex = this.vertexMap.get(this.startBlock);
         int endBlockVertex = this.vertexMap.get(this.endBlock);
-        int minimumEdges = this.graph.minEdgeBFS(startBlockVertex, endBlockVertex);
-        System.out.println("\nCaminho com menor numero de passos: " + minimumEdges);
+        LinkedList<Integer> path = this.graph.minEdgeBFS(startBlockVertex, endBlockVertex);
+        for(Integer integer : path){
+            Block block = this.invertedVertexMap.get(integer);
+            if(block != null && block.symbol != 'C' && block.symbol != 'S') {
+                block.symbol = 'O';
+            }
+        }
+        return path.size();
     }
     
     // Prints the labyrinth on screen.

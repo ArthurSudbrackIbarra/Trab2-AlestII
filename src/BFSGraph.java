@@ -6,7 +6,7 @@ class BFSGraph {
 
     private final Vector<Integer>[] edges;
     private final Vector<Boolean> visited;
-    private final Vector<Integer> distance;
+    private final Vector<Integer> cameFrom;
 
     // Constructor.
     public BFSGraph(int vertexCount){
@@ -18,9 +18,9 @@ class BFSGraph {
         for (int i = 0; i < vertexCount; i++) {
             visited.addElement(false);
         }
-        this.distance = new Vector<Integer>(vertexCount);
+        this.cameFrom = new Vector<Integer>(vertexCount);
         for (int i = 0; i < vertexCount; i++) {
-            distance.addElement(0);
+            cameFrom.addElement(-1);
         }
     }
 
@@ -32,11 +32,11 @@ class BFSGraph {
     }
 
     // Method for finding minimum no. of edge using BFS.
-    public int minEdgeBFS(int u, int v)
+    public LinkedList<Integer> minEdgeBFS(int u, int v)
     {
         // Queue to do BFS.
         Queue<Integer> queue = new LinkedList<>();
-        distance.setElementAt(0, u);
+        cameFrom.setElementAt(u, u);
 
         queue.add(u);
         visited.setElementAt(true, u);
@@ -50,12 +50,24 @@ class BFSGraph {
                 if (visited.elementAt(edges[x].get(i)))
                     continue;
 
-                // Update distance for i.
-                distance.setElementAt(distance.get(x) + 1,edges[x].get(i));
+                cameFrom.setElementAt(x, edges[x].get(i));
+
                 queue.add(edges[x].get(i));
-                visited.setElementAt(true,edges[x].get(i));
+                visited.setElementAt(true, edges[x].get(i));
             }
         }
-        return distance.get(v);
+
+        LinkedList<Integer> path = new LinkedList<>();
+        int currentVertex = this.cameFrom.get(v);
+        if(currentVertex == -1){
+            return path;
+        }
+        path.add(0, currentVertex);
+        while(currentVertex != u){
+            currentVertex = this.cameFrom.get(currentVertex);
+            path.add(0, currentVertex);
+        }
+        path.add(0, currentVertex);
+        return path;
     }
 }
