@@ -4,11 +4,11 @@ public class Main {
 
     public static void main(String[] args) {
         try{
-            Board board = new Board("caso040.txt");
+            Labyrinth labyrinth = new Labyrinth("caso040.txt");
             System.out.print("[Labirinto]\n");
-            board.printBoard();
-            // board.possibleMovementsFrom(0, 0);
-            board.findShortestPath();
+            labyrinth.printLabyrinth();
+            // labyrinth.possibleMovementsFrom(0, 0);
+            labyrinth.findShortestPath();
         }
         catch (IOException error){
             System.out.println("Erro!");
