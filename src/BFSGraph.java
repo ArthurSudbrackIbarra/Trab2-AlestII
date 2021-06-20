@@ -9,6 +9,8 @@ class BFSGraph {
     private final Vector<Boolean> visited;
     private final Vector<Integer> cameFrom;
 
+    private static int counter;
+
     // Constructor.
     public BFSGraph(int vertexCount){
         this.edges = new Vector[vertexCount];
@@ -35,6 +37,8 @@ class BFSGraph {
     // Method for finding minimum number of edge using BFS.
     public LinkedList<Integer> minEdgeBFS(int u, int v)
     {
+        counter = 0;
+
         // Queue to do BFS.
         Queue<Integer> queue = new LinkedList<>();
         cameFrom.setElementAt(u, u);
@@ -55,8 +59,12 @@ class BFSGraph {
 
                 queue.add(edges[x].get(i));
                 visited.setElementAt(true, edges[x].get(i));
+
+                counter++;
             }
         }
+
+        System.out.print("\nContagem operacoes BFS: " + counter + "\n");
 
         LinkedList<Integer> path = new LinkedList<>();
         int currentVertex = this.cameFrom.get(v);
