@@ -1,11 +1,13 @@
+import customexceptions.NoCharacterOrDestinationFoundException;
+import customexceptions.NotEnoughLinesOrColumnsException;
+
 import java.io.IOException;
 
 public class Main {
 
     public static void main(String[] args) {
         try{
-            Labyrinth labyrinth = new Labyrinth("caso080.txt");
-
+            Labyrinth labyrinth = new Labyrinth("casoenunciado.txt");
             int numberOfSteps = labyrinth.findShortestPath();
             if(numberOfSteps == 0){
                 System.out.print("Nao ha caminho para o labirinto em questao.");
@@ -18,7 +20,11 @@ public class Main {
             }
         }
         catch (IOException error){
-            System.out.println("Erro!");
+            System.out.print("Erro durante a leitura do arquivo! Certifique-se de que " +
+                    "\nos arquivos dos casos de teste estao presentes na raiz do projeto!");
+        }
+        catch (NoCharacterOrDestinationFoundException | NotEnoughLinesOrColumnsException error){
+            System.out.print("Erro: " + error.getMessage());
         }
     }
 }

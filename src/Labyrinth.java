@@ -1,3 +1,6 @@
+import customexceptions.NoCharacterOrDestinationFoundException;
+import customexceptions.NotEnoughLinesOrColumnsException;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -29,7 +32,7 @@ public class Labyrinth {
             this.possibleMovements.add(block);
         }
 
-        // equals method for our vertex HashMap.
+        // equals method for the vertex HashMap.
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
@@ -40,7 +43,7 @@ public class Labyrinth {
                     column == block.column;
         }
 
-        // hashCode method for our vertex HashMap.
+        // hashCode method for the vertex HashMap.
         @Override
         public int hashCode() {
             return (Integer.toString(this.line) + this.column).hashCode();
@@ -63,7 +66,9 @@ public class Labyrinth {
     private final HashMap<Integer, Block> invertedVertexMap;
 
     // Constructor.
-    public Labyrinth(String fileDirectory) throws IOException {
+    public Labyrinth(String fileDirectory)
+            throws IOException, NoCharacterOrDestinationFoundException, NotEnoughLinesOrColumnsException
+    {
         Path path = Paths.get(fileDirectory);
         BufferedReader reader = Files.newBufferedReader(path, Charset.defaultCharset());
 
@@ -104,6 +109,13 @@ public class Labyrinth {
         this.graph = new BFSGraph(lineCount * columnCount);
         this.vertexMap = new HashMap<>();
         this.invertedVertexMap = new HashMap<>();
+
+        if(this.startBlock == null || this.endBlock == null){
+            throw new NoCharacterOrDestinationFoundException("Personagem ou saida nao encontrado(s).");
+        }
+        if(columnCount < 2 || lineCount < 2){
+            throw new NotEnoughLinesOrColumnsException("Quantidade muito pequena de linhas e/ou colunas.");
+        }
 
         fillPossibleMovements();
         addEdgesToGraph();
