@@ -4,7 +4,7 @@ public class Main {
 
     public static void main(String[] args) {
         try{
-            Labyrinth labyrinth = new Labyrinth("caso150.txt");
+            Labyrinth labyrinth = new Labyrinth("caso080.txt");
 
             int numberOfSteps = labyrinth.findShortestPath();
             if(numberOfSteps == 0){

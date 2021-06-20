@@ -53,6 +53,7 @@ public class Labyrinth {
 
     }
 
+    // Attributes.
     private final Block[][] labyrinth;
     private Block endBlock;
     private Block startBlock;
@@ -61,6 +62,7 @@ public class Labyrinth {
     private final HashMap<Block, Integer> vertexMap;
     private final HashMap<Integer, Block> invertedVertexMap;
 
+    // Constructor.
     public Labyrinth(String fileDirectory) throws IOException {
         Path path = Paths.get(fileDirectory);
         BufferedReader reader = Files.newBufferedReader(path, Charset.defaultCharset());

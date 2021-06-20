@@ -4,6 +4,7 @@ import java.util.Vector;
 
 class BFSGraph {
 
+    // Attributes.
     private final Vector<Integer>[] edges;
     private final Vector<Boolean> visited;
     private final Vector<Integer> cameFrom;
@@ -31,7 +32,7 @@ class BFSGraph {
         this.edges[v].add(u);
     }
 
-    // Method for finding minimum no. of edge using BFS.
+    // Method for finding minimum number of edge using BFS.
     public LinkedList<Integer> minEdgeBFS(int u, int v)
     {
         // Queue to do BFS.
