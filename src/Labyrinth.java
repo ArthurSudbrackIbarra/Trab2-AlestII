@@ -122,7 +122,7 @@ public class Labyrinth {
     }
 
     // Fills each possible movement from each block.
-    public void fillPossibleMovements(){
+    private void fillPossibleMovements(){
         int lines = this.labyrinth.length;
         int columns = this.labyrinth[0].length;
         int vertexCount = 0;

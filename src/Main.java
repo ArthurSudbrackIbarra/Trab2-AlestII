@@ -15,7 +15,7 @@ public class Main {
             else{
                 System.out.print("\n[Menor caminho]\n");
                 labyrinth.printLabyrinth();
-                System.out.print("\nNumero de passos: " + numberOfSteps);
+                System.out.print("\nNumero de blocos: " + numberOfSteps);
                 System.out.print("\n\nAs bolinhas 'O' indicam por onde o carneirinho passou.");
             }
         }
