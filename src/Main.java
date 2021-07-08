@@ -7,7 +7,7 @@ public class Main {
 
     public static void main(String[] args) {
         try{
-            Labyrinth labyrinth = new Labyrinth("casoenunciado.txt");
+            Labyrinth labyrinth = new Labyrinth("caso200.txt");
             int numberOfSteps = labyrinth.findShortestPath();
             if(numberOfSteps == 0){
                 System.out.print("Nao ha caminho para o labirinto em questao.");
